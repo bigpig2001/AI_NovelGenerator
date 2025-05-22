@@ -51,8 +51,70 @@
 
 ---
 
+## Web Application Setup and Usage
 
-## 📥 安装说明
+This project has been converted to a web application using Flask for the backend and Vue.js for the frontend.
+
+**1. Getting the Code (Git):**
+
+The latest version with the web interface is on the branch `web-conversion-vue-frontend`.
+
+*   If you haven't cloned the repository yet:
+    ```bash
+    git clone <your_repository_url>
+    cd <repository_directory>
+    ```
+    (Replace `<your_repository_url>` with the actual URL of the Git repository)
+*   Fetch the latest changes and the new branch:
+    ```bash
+    git fetch origin
+    ```
+*   Checkout the new branch:
+    ```bash
+    git checkout web-conversion-vue-frontend
+    ```
+*   (Optional) To merge this into your main branch (e.g., `main`):
+    ```bash
+    git checkout main 
+    git merge web-conversion-vue-frontend
+    ```
+
+**2. Environment Setup:**
+
+*   **Navigate to Project Directory:** Open your terminal/command prompt and go to the project's root folder (where `app.py` is located).
+*   **Python Version:** Ensure you have Python 3.9+ (Python 3.10 - 3.12 recommended).
+*   **Python Virtual Environment (Recommended):**
+    ```bash
+    # Create virtual environment (run once per project)
+    python -m venv venv 
+    # Activate (do this every time you start working on the project)
+    # On Windows:
+    # venv\Scripts\activate
+    # On macOS/Linux:
+    # source venv/bin/activate
+    ```
+*   **Install Dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+**3. Running the Web Application:**
+
+*   **Start the Flask Development Server:**
+    ```bash
+    python app.py
+    ```
+    You should see output indicating the server is running, typically on `http://127.0.0.1:5000/` or `http://0.0.0.0:5000/`.
+*   **Access in Browser:** Open your web browser and navigate to the URL shown in your terminal (e.g., `http://127.0.0.1:5000/`).
+
+**Important Considerations:**
+
+*   **`config.json`:** This file stores API keys and model settings for LLMs and embedding models. If this file is missing or incomplete when you first run the application, you will need to configure these settings via the web UI's "Configuration Management" section. The application will create/update `config.json` when you save settings through the UI.
+*   **`novel_projects` Directory:** The application will automatically create a `novel_projects` directory in the project root if it doesn't exist. This is where all generated novel data (architecture, blueprints, chapters, vector stores, etc.) will be stored for each project (e.g., `novel_projects/default_project/`).
+*   **Development Server:** The `python app.py` command runs Flask's built-in development server. While convenient for local development and testing, for a production deployment, you would typically use a more robust WSGI server like Gunicorn or Waitress.
+*   **Unit Tests:** The project includes unit tests for the backend API. You can run them with `python test_app.py` from the project root (ensure your virtual environment is active and dependencies are installed).
+
+## Legacy Desktop App Installation (Archived)
 1. **下载项目**  
    - 通过 [GitHub](https://github.com) 下载项目 ZIP 文件，或使用以下命令克隆本项目：
      ```bash
@@ -74,7 +136,7 @@
      ```
    - 安装完成后，运行主程序：
      ```bash
-     python main.py
+     python main.py 
      ```
 
 >如果缺失部分依赖，后续**手动执行**
@@ -86,18 +148,21 @@
 ## 🗂 项目架构
 ```
 novel-generator/
-├── main.py                      # 入口文件, 运行 GUI
-├── ui.py                        # 图形界面
-├── novel_generator.py           # 章节生成核心逻辑
-├── consistency_checker.py       # 一致性检查, 防止剧情冲突
-|—— chapter_directory_parser.py  # 目录解析
-|—— embedding_adapters.py        # Embedding 接口封装
-|—— llm_adapters.py              # LLM 接口封装
-├── prompt_definitions.py        # 定义 AI 提示词
-├── utils.py                     # 常用工具函数, 文件操作
-├── config_manager.py            # 管理配置 (API Key, Base URL)
-├── config.json                  # 用户配置文件 (可选)
-└── vectorstore/                 # (可选) 本地向量数据库存储
+├── app.py                       # Web app entry point (Flask)
+├── static/                      # Static files for web (CSS, JS)
+├── templates/                   # HTML templates for web
+├── novel_generator/             # Core novel generation logic
+├── consistency_checker.py       # Consistency checking logic
+|—— chapter_directory_parser.py  # Directory parsing
+|—— embedding_adapters.py        # Embedding interface wrappers
+|—— llm_adapters.py              # LLM interface wrappers
+├── prompt_definitions.py        # Prompt templates
+├── utils.py                     # Utility functions
+├── config_manager.py            # Configuration management
+├── test_app.py                  # API unit tests
+├── config.json                  # User configuration (API keys, models)
+├── requirements.txt             # Python dependencies
+└── novel_projects/              # Default directory for generated novel data
 ```
 
 ---
@@ -121,11 +186,13 @@ novel-generator/
     "genre": "玄幻",
     "num_chapters": 120,
     "word_number": 4000,
-    "filepath": "D:/AI_NovelGenerator/filepath"
+    "filepath": "D:/AI_NovelGenerator/filepath" 
 }
 ```
+**(Note: For the web application, `filepath` in `config.json` is less relevant as project paths are managed by the app, typically under `novel_projects/<project_name>/`. The UI allows managing LLM and embedding configs.)**
 
-### 🔧 配置说明
+### 🔧 配置说明 
+(Largely still relevant for understanding `config.json` which the web UI edits)
 1. **生成模型配置**
    - `api_key`: 大模型服务的API密钥
    - `base_url`: API终端地址（本地服务填Ollama等地址）
@@ -139,19 +206,20 @@ novel-generator/
    - `embedding_url`: 服务地址
    - `embedding_retrieval_k`: 
 
-3. **小说参数配置**
+3. **小说参数配置 (Primarily for initial setup, now managed via UI for generation steps)**
    - `topic`: 核心故事主题
    - `genre`: 作品类型
    - `num_chapters`: 总章节数
    - `word_number`: 单章目标字数
-   - `filepath`: 生成文件存储路径
+   - `filepath`: (Legacy, see note above)
 
 ---
 
-## 🚀 运行说明
+## 🚀 运行说明 
+**(This section is now covered by "Web Application Setup and Usage". The content below refers to the legacy desktop app.)**
 ### **方式 1：使用 Python 解释器**
 ```bash
-python main.py
+python main.py # Legacy Desktop App
 ```
 执行后，GUI 将会启动，你可以在图形界面中进行各项操作。
 
@@ -160,13 +228,15 @@ python main.py
 
 ```bash
 pip install pyinstaller
-pyinstaller main.spec
+pyinstaller main.spec # This spec file was for the old main.py
 ```
 打包完成后，会在 `dist/` 目录下生成可执行文件（如 Windows 下的 `main.exe`）。
 
 ---
 
-## 📘 使用教程
+## 📘 使用教程 
+**(This section describes the legacy desktop GUI. The new web interface has a similar workflow but different visual components.)**
+
 1. **启动后，先完成基本参数设置：**  
    - **API Key & Base URL**（如 `https://api.openai.com/v1`）  
    - **模型名称**（如 `gpt-3.5-turbo`、`gpt-4o` 等）  
@@ -232,7 +302,7 @@ pyinstaller main.spec
 确认接口是否稳定；
 
 ### Q3: 如何切换不同的Embedding提供商？
-在GUI界面中对应输入即可。
+在GUI界面中对应输入即可。 (For web app, this is done via the "Configuration Management" section of the UI).
 
 ---
 
